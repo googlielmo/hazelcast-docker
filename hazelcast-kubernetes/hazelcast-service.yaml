@@ -28,7 +28,8 @@ spec:
     spec:
       containers:
       - name: hazelcast-node
-        image: hazelcast/hazelcast-kubernetes:3.9
+        # use a private dev image here, e.g.:
+        image: gcr.io/my-test-project/hz-test-dev:3.9
         ports:
         - containerPort: 5701
         livenessProbe:

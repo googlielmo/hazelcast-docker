@@ -11,7 +11,7 @@ ENV USER_UID=10001
 
 ENV HZ_VERSION 3.9
 
-ARG HZ_KUBE_VERSION=1.0.0
+ARG HZ_KUBE_VERSION=1.0.1-SNAPSHOT
 ARG HZ_MAVEN_DIR=${HZ_VERSION}
 ARG REPOSITORY_URL=https://repo1.maven.org/maven2
 
@@ -40,6 +40,10 @@ ADD https://repo1.maven.org/maven2/org/slf4j/jul-to-slf4j/1.7.12/jul-to-slf4j-1.
 
 ### Adding JCache
 ADD https://repo1.maven.org/maven2/javax/cache/cache-api/1.0.0/cache-api-1.0.0.jar $HZ_HOME
+
+### Adding Dev kubernetes plugin
+ADD hazelcast-kubernetes-${HZ_KUBE_VERSION}.jar $HZ_HOME/.m2/repository/com/hazelcast/hazelcast-kubernetes/${HZ_KUBE_VERSION}/hazelcast-kubernetes-${HZ_KUBE_VERSION}.jar
+ADD hazelcast-kubernetes-${HZ_KUBE_VERSION}.pom $HZ_HOME/.m2/repository/com/hazelcast/hazelcast-kubernetes/${HZ_KUBE_VERSION}/hazelcast-kubernetes-${HZ_KUBE_VERSION}.pom
 
 ### Adding maven wrapper, downloading Hazelcast Kubernetes discovery plugin and dependencies and cleaning up
 COPY mvnw $HZ_HOME/mvnw
