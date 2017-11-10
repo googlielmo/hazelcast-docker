@@ -5,4 +5,4 @@ metadata:
   namespace: default
 data:
   HAZELCAST_KUBERNETES_NAMESPACE: default
-  HAZELCAST_KUBERNETES_SERVICE_NAME: hazelcast
+#  HAZELCAST_KUBERNETES_SERVICE_NAME: hazelcast

@@ -4,6 +4,7 @@ metadata:
   name: hazelcast
   labels:
     app: hazelcast
+    cluster01: "true"
 spec:
   type: NodePort
   selector:
@@ -12,15 +13,28 @@ spec:
   - protocol: TCP
     port: 5701
     name: hzport
-
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: hazelcast1
+#  labels:
+#    app: hazelcast1
+#spec:
+#  type: NodePort
+#  selector:
+#    app: hazelcast1
+#  ports:
+#  - protocol: TCP
+#    port: 5701
+#    name: hzport
 ---
-
 apiVersion: v1
 kind: ReplicationController
 metadata:
   name: hazelcast
 spec:
-  replicas: 3
+  replicas: 2
   template:
     metadata:
       labels:
@@ -29,7 +43,7 @@ spec:
       containers:
       - name: hazelcast-node
         # use a private dev image here, e.g.:
-        image: gcr.io/my-test-project/hz-test-dev:3.9
+        image: gcr.io/jaromirs-test-project/hz-test-dev:3.9
         ports:
         - containerPort: 5701
         livenessProbe:
@@ -39,6 +53,38 @@ spec:
           initialDelaySeconds: 30
           timeoutSeconds: 5
           periodSeconds: 10
+        envFrom:
+        - configMapRef:
+            name: hz-config
+
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: hazelcast1
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: hazelcast1
+    spec:
+      containers:
+      - name: hazelcast-node1
+        # use a private dev image here, e.g.:
+        image: gcr.io/jaromirs-test-project/hz-test-dev-nolabel:3.9
+        ports:
+        - containerPort: 5701
+        livenessProbe:
+          exec:
+            command:
+            - "./liveness.sh"
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+          periodSeconds: 10
+        env:
+            - name: HAZELCAST_KUBERNETES_SERVICE_NAME
+              value: hazelcast1
         envFrom:
         - configMapRef:
             name: hz-config
