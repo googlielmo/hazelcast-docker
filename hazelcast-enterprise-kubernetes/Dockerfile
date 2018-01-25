@@ -24,6 +24,7 @@ ADD start.sh $HZ_HOME/start.sh
 ADD stop.sh $HZ_HOME/stop.sh
 ADD liveness.sh $HZ_HOME/liveness.sh
 ADD readiness.sh $HZ_HOME/readiness.sh
+ADD liveness-ru.sh $HZ_HOME/liveness-ru.sh
 
 RUN yum update -y && \
 yum install -y wget && \

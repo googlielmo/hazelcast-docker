@@ -1,0 +1,70 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    run: hazelcast-ee
+  name: hazelcast-ee
+  namespace: default
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      run: hazelcast
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: hazelcast
+    spec:
+      containers:
+      - name: hazelcast-ee-node
+        image: gcr.io/jaromirs-test-project/hz-ee:3.9.2
+        ports:
+        - containerPort: 5701
+        livenessProbe:
+          exec:
+            command:
+            - ./liveness-ru.sh
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+          periodSeconds: 10
+          failureThreshold: 12
+        envFrom:
+        - configMapRef:
+            name: hz-ee-config
+        env:
+        - name: HZ_LICENSE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hz-ee-license
+              key: key
+        - name: JAVA_OPTS
+          value: -Dhazelcast.rest.enabled=true
+        lifecycle:
+          preStop:
+            exec:
+              command:
+                - "./stop.sh"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: hazelcast-ee
+  name: hazelcast-ee
+  namespace: default
+spec:
+  ports:
+  - port: 5701
+    targetPort: 5701
+  selector:
+    run: hazelcast
+  type: NodePort
