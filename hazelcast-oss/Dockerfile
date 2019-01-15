@@ -1,4 +1,4 @@
-FROM openjdk:8u171-jre-alpine
+FROM openjdk:12-alpine
 
 # Versions of Hazelcast and Hazelcast plugins
 ARG HZ_VERSION=3.11.1
@@ -54,7 +54,7 @@ RUN echo 'hazelcastDownloadId=docker' > hazelcast-download.properties
 
 # Runtime constants
 ENV CLASSPATH_DEFAULT "${HZ_HOME}:${HZ_HOME}/*"
-ENV JAVA_OPTS_DEFAULT "-Djava.net.preferIPv4Stack=true -Dhazelcast.mancenter.enabled=false"
+ENV JAVA_OPTS_DEFAULT "-Djava.net.preferIPv4Stack=true -Dhazelcast.mancenter.enabled=false  --add-modules java.se --add-exports java.base/jdk.internal.ref=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/sun.nio.ch=ALL-UNNAMED --add-opens java.management/sun.management=ALL-UNNAMED --add-opens jdk.management/com.sun.management.internal=ALL-UNNAMED"
 
 # Runtime environment variables
 ENV MIN_HEAP_SIZE ""
